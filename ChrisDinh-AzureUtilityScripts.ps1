@@ -43,3 +43,21 @@ Function New-AzureServicePrincipal {
    
    $o = New-Object psobject -Property $properties;$o
 } # End New-AzureServicePrincipal
+
+Function Connect-AzureServicePrincipal {
+   <#
+   .Synopsis
+      Connect-AzAccount with service principal.
+   #>
+
+   [CmdletBinding()]
+   param (
+      [Parameter(Mandatory)] [string] $TenantId,
+      [Parameter(Mandatory)] [SecureString] $Password,
+      [Parameter(Mandatory)] [string] $ApplicationId
+   )
+
+   $PSCredential = New-Object System.Management.Automation.PSCredential($ApplicationId , $Password)
+   Connect-AzAccount -ServicePrincipal -TenantId $TenantId -Credential $PSCredential
+} # Connect-AzureServicePrincipal
+
