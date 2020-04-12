@@ -42,6 +42,10 @@ Function New-AzureServicePrincipal {
    }
    
    $o = New-Object psobject -Property $properties;$o
+
+   <# Source material used:
+      https://docs.microsoft.com/en-us/powershell/azure/create-azure-service-principal-azureps?view=azps-3.7.0
+   #>
 } # End New-AzureServicePrincipal
 
 Function Connect-AzureServicePrincipal {
