@@ -76,7 +76,7 @@ Function New-AzureAppServicePlan {
       [Parameter(Mandatory)] [string] $Name,
       [Parameter(Mandatory)] [string] $ResourceGroupName,
       [string] $Location = "southeastasia",
-      [string] $SkuName = "F1"
+      [string] $Tier = "F1"
    )
 
    $ResourceGroup = Get-AzResourceGroup -Name $ResourceGroupName -Location $Location -Verbose -ErrorAction SilentlyContinue
@@ -90,6 +90,6 @@ Function New-AzureAppServicePlan {
       $Location = $ResourceGroup.Location
    }
 
-   New-AzAppServicePlan -Name $Name -ResourceGroupName $ResourceGroupName -Location $Location -Tier $SkuName
+   New-AzAppServicePlan -Name $Name -ResourceGroupName $ResourceGroupName -Location $Location -Tier $Tier -Verbose -ErrorAction Stop
 } # Connect-AzureServicePrincipal
 
