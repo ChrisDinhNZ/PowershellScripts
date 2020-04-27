@@ -65,3 +65,31 @@ Function Connect-AzureServicePrincipal {
    Connect-AzAccount -ServicePrincipal -TenantId $TenantId -Credential $PSCredential
 } # Connect-AzureServicePrincipal
 
+Function New-AzureAppServicePlan {
+   <#
+   .Synopsis
+      Create new app service plan under specified resource group.
+   #>
+
+   [CmdletBinding()]
+   param (
+      [Parameter(Mandatory)] [string] $Name,
+      [Parameter(Mandatory)] [string] $ResourceGroupName,
+      [string] $Location = "southeastasia",
+      [string] $SkuName = "F1"
+   )
+
+   $ResourceGroup = Get-AzResourceGroup -Name $ResourceGroupName -Location $Location -Verbose -ErrorAction SilentlyContinue
+
+   if ($null -eq $ResourceGroup) {
+      # Create new resource group.
+      New-AzResourceGroup -Name $ResourceGroupName -Location $Location -Verbose -Force -ErrorAction Stop
+   }
+   else {
+      # Resource group exists, app service plan should be at the same location.
+      $Location = $ResourceGroup.Location
+   }
+
+   New-AzAppServicePlan -Name $Name -ResourceGroupName $ResourceGroupName -Location $Location -Tier $SkuName
+} # Connect-AzureServicePrincipal
+
