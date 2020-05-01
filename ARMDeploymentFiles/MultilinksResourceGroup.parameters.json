@@ -1,0 +1,53 @@
+{
+   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+   "contentVersion": "1.0.0.0",
+   "parameters": {
+      "subscriptionId": {
+         "value": null
+      },
+
+      "webSiteName": {
+         "value": null
+      },
+      "hostingPlanName": {
+         "value": "asp-japanwest-f1"
+      },
+      "hostingPlanLocation": {
+         "value": "japanwest"
+      },
+      "hostingPlanResourceGroup": {
+         "value": null
+      },
+      "skuName": {
+         "value": "F1"
+      },
+      "skuCapacity": {
+         "value": 1
+      },
+
+      "sqlserverName": {
+         "value": null
+      },
+      "administratorLogin": {
+         "value": null
+      },
+      "administratorLoginPassword": {
+         "value": null
+      },
+      "databaseName": {
+         "value": null
+      },
+      "edition": {
+         "value": "Free"
+      },
+      "requestedServiceObjectiveName": {
+         "value": "Free"
+      },
+      "collation": {
+         "value": "SQL_Latin1_General_CP1_CI_AS"
+      },
+      "maxSizeBytes": {
+         "value": "33554432"
+      }
+   }
+}
