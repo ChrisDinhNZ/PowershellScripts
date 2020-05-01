@@ -64,7 +64,7 @@ Function New-MultilinksResourceGroupDeployment {
 
    $MultilinksResourceGroupParameters = @{
       'ResourceGroupLocation'  = $ResourceGroupLocation
-      'ResourceGroupName'      = $ResourceGroupLocation
+      'ResourceGroupName'      = $ResourceGroupName
       'TemplateFile'           = $TemplateFile
       'TemplateParametersFile' = $TemplateParametersFile
    }
