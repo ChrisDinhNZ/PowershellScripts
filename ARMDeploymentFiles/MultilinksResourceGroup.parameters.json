@@ -2,46 +2,36 @@
    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
    "contentVersion": "1.0.0.0",
    "parameters": {
-      "subscriptionId": {
+      "SubscriptionId": {
+         "value": null
+      },
+      "AppServiceName": {
+         "value": null
+      },
+      "AppServicePlanName": {
+         "value": null
+      },
+      "AppServicePlanRGName": {
          "value": null
       },
 
-      "webSiteName": {
+      "SqlServerName": {
          "value": null
       },
-      "hostingPlanName": {
-         "value": "asp-japanwest-f1"
-      },
-      "hostingPlanLocation": {
-         "value": "japanwest"
-      },
-      "hostingPlanResourceGroup": {
+      "SqlServerAdminLogin": {
          "value": null
       },
-      "skuName": {
-         "value": "F1"
-      },
-      "skuCapacity": {
-         "value": 1
-      },
-
-      "sqlserverName": {
+      "SqlServerAdminPassword": {
          "value": null
       },
-      "administratorLogin": {
+      "SqlDbName": {
          "value": null
       },
-      "administratorLoginPassword": {
+      "SqlDbTierEdition": {
          "value": null
       },
-      "databaseName": {
+      "SqlDbTierName": {
          "value": null
-      },
-      "edition": {
-         "value": "Free"
-      },
-      "requestedServiceObjectiveName": {
-         "value": "Free"
       },
       "collation": {
          "value": "SQL_Latin1_General_CP1_CI_AS"
