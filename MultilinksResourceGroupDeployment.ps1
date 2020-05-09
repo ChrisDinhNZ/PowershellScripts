@@ -8,14 +8,10 @@ Function New-MultilinksResourceGroupDeployment {
 
    [CmdletBinding()]
    param (
-      [Parameter(Mandatory)] [string] $SubscriptionId,
-      [Parameter(Mandatory)] [string] $AppServiceName,
       [Parameter(Mandatory)] [string] $AppServicePlanName,
       [Parameter(Mandatory)] [string] $AppServicePlanRGName,
       [Parameter(Mandatory)] [string] $AppServicePlanRGLocation,
       [Parameter(Mandatory)] [string] $AppServicePlanTier,
-      [Parameter(Mandatory)] [string] $ResourceGroupName,
-      [Parameter(Mandatory)] [string] $ResourceGroupLocation,
 
       [Parameter(Mandatory)] [string] $SqlServerName,
       [Parameter(Mandatory)] [string] $SqlServerAdminLogin,
@@ -23,6 +19,11 @@ Function New-MultilinksResourceGroupDeployment {
       [Parameter(Mandatory)] [string] $SqlDbName,
       [Parameter(Mandatory)] [string] $SqlDbTierEdition,
       [Parameter(Mandatory)] [string] $SqlDbTierName,
+
+      [Parameter(Mandatory)] [string] $SubscriptionId,
+      [Parameter(Mandatory)] [string] $AppServiceName,
+      [Parameter(Mandatory)] [string] $ResourceGroupName,
+      [Parameter(Mandatory)] [string] $ResourceGroupLocation,
 
       [Parameter(Mandatory)] [string] $TemplateFile,
       [Parameter(Mandatory)] [string] $TemplateParametersFile

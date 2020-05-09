@@ -39,6 +39,7 @@ Function New-AzureServicePrincipal {
       ApplicationId = $ApplicationId
       TenantId = $TenantId
       Secret = $UnsecureSecret
+      # TODO: Also return objectId
    }
    
    $o = New-Object psobject -Property $properties;$o
@@ -85,11 +86,38 @@ Function New-AzureAppServicePlan {
       # Create new resource group.
       New-AzResourceGroup -Name $ResourceGroupName -Location $Location -Verbose -Force -ErrorAction Stop
    }
-   else {
-      # Resource group exists, app service plan should be at the same location.
-      $Location = $ResourceGroup.Location
+
+   New-AzAppServicePlan -Name $Name -ResourceGroupName $ResourceGroupName -Location $Location -Tier $Tier
+} # New-AzureAppServicePlan
+
+Function New-AzureKeyVault {
+   <#
+   .Synopsis
+      Create new key vault under specified resource group.
+   #>
+
+   [CmdletBinding()]
+   param (
+      [Parameter(Mandatory)] [string] $Name,
+      [Parameter(Mandatory)] [string] $ResourceGroupName,
+      [Parameter(Mandatory)] [string] $ServicePrincipleObjectId,
+      [string] $Location = "southeastasia",
+      [string] $Sku = "Standard"
+   )
+
+   $KeyVault = Get-AzKeyVault -VaultName $Name
+
+   if ($null -eq $KeyVault) {
+      $ResourceGroup = Get-AzResourceGroup -Name $ResourceGroupName -Location $Location -Verbose -ErrorAction SilentlyContinue
+
+      if ($null -eq $ResourceGroup) {
+         # Create new resource group.
+         New-AzResourceGroup -Name $ResourceGroupName -Location $Location -Verbose -Force -ErrorAction Stop
+      }
+
+      $KeyVault = New-AzKeyVault -VaultName $Name -ResourceGroupName $ResourceGroupName -Location $Location -Sku $Sku -EnabledForDiskEncryption -EnabledForTemplateDeployment -Verbose
+      Set-AzKeyVaultAccessPolicy -VaultName $Name -ResourceGroupName $ResourceGroupName -ObjectId $ServicePrincipleObjectId -PermissionsToSecrets set,get,list -Verbose
    }
 
-   New-AzAppServicePlan -Name $Name -ResourceGroupName $ResourceGroupName -Location $Location -Tier $Tier -Verbose -ErrorAction Stop
-} # Connect-AzureServicePrincipal
-
+   $KeyVault
+} # New-AzureKeyVault
