@@ -2,42 +2,11 @@
    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
    "contentVersion": "1.0.0.0",
    "parameters": {
-      "SubscriptionId": {
+      "KeyVaultName": {
          "value": null
       },
-      "AppServiceName": {
+      "KeyVaultRGName": {
          "value": null
-      },
-      "AppServicePlanName": {
-         "value": null
-      },
-      "AppServicePlanRGName": {
-         "value": null
-      },
-
-      "SqlServerName": {
-         "value": null
-      },
-      "SqlServerAdminLogin": {
-         "value": null
-      },
-      "SqlServerAdminPassword": {
-         "value": null
-      },
-      "SqlDbName": {
-         "value": null
-      },
-      "SqlDbTierEdition": {
-         "value": null
-      },
-      "SqlDbTierName": {
-         "value": null
-      },
-      "collation": {
-         "value": "SQL_Latin1_General_CP1_CI_AS"
-      },
-      "maxSizeBytes": {
-         "value": "33554432"
       }
    }
 }

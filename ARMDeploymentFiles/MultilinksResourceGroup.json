@@ -2,142 +2,240 @@
    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
    "contentVersion": "1.0.0.0",
    "parameters": {
+      "KeyVaultName": {
+         "type": "string"
+      },
+      "KeyVaultRGName": {
+         "type": "string"
+      },
       "SubscriptionId": {
-         "type": "string"
-      },
-
-      "AppServiceName": {
-         "type": "string"
-      },
-      "AppServicePlanName": {
-         "type": "string"
-      },
-      "AppServicePlanRGName": {
-         "type": "string"
-      },
-
-      "SqlServerName": {
-         "type": "string"
-      },
-      "SqlServerAdminLogin": {
-         "type": "string"
-      },
-      "SqlServerAdminPassword": {
-         "type": "securestring"
-      },
-      "SqlDbName": {
-         "type": "string"
-      },
-      "SqlDbTierEdition": {
          "type": "string",
-         "allowedValues": [
-            "Free",
-            "Basic",
-            "Standard",
-            "Premium"
-         ]
-      },
-      "SqlDbTierName": {
-         "type": "string",
-         "allowedValues": [
-            "Free",
-            "Basic",
-            "S0",
-            "S1",
-            "S2",
-            "P1",
-            "P2",
-            "P3"
-         ],
+         "defaultValue": "[subscription().subscriptionId]",
          "metadata": {
-            "description": "Describes the performance level for Edition"
+            "description": "KeyVaultSubscriptionId is assumed to be this subscription."
          }
       },
-      "collation": {
+      "Location": {
          "type": "string",
-         "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
-      },
-      "maxSizeBytes": {
-         "type": "string",
-         "defaultValue": "1073741824"
+         "defaultValue": "[resourceGroup().location]"
       }
    },
    "resources": [
       {
-         "name": "[parameters('SqlServerName')]",
-         "type": "Microsoft.Sql/servers",
-         "location": "[resourceGroup().location]",
-         "tags": {
-            "displayName": "SqlServer"
-         },
-         "apiVersion": "2014-04-01",
+         "type": "Microsoft.Resources/deployments",
+         "apiVersion": "2018-05-01",
+         "name": "NestedDeployment",
          "properties": {
-            "administratorLogin": "[parameters('SqlServerAdminLogin')]",
-            "administratorLoginPassword": "[parameters('SqlServerAdminPassword')]"
-         },
-         "resources": [
-            {
-               "name": "[parameters('SqlDbName')]",
-               "type": "databases",
-               "location": "[resourceGroup().location]",
-               "tags": {
-                  "displayName": "Database"
-               },
-               "apiVersion": "2014-04-01",
-               "dependsOn": [
-                  "[resourceId('Microsoft.Sql/servers/', parameters('SqlServerName'))]"
-               ],
-               "properties": {
-                  "edition": "[parameters('SqlDbTierEdition')]",
-                  "collation": "[parameters('collation')]",
-                  "maxSizeBytes": "[parameters('maxSizeBytes')]",
-                  "requestedServiceObjectiveName": "[parameters('SqlDbTierName')]"
-               }
+            "mode": "Incremental",
+            "expressionEvaluationOptions": {
+               "scope": "inner"
             },
-            {
-               "type": "firewallrules",
-               "apiVersion": "2014-04-01",
-               "dependsOn": [
-                  "[resourceId('Microsoft.Sql/servers/', parameters('SqlServerName'))]"
-               ],
-               "location": "[resourceGroup().location]",
-               "name": "AllowAllWindowsAzureIps",
-               "properties": {
-                  "endIpAddress": "0.0.0.0",
-                  "startIpAddress": "0.0.0.0"
-               }
-            }
-         ]
-      },
-      {
-         "apiVersion": "2015-08-01",
-         "name": "[parameters('AppServiceName')]",
-         "type": "Microsoft.Web/sites",
-         "location": "[resourceGroup().location]",
-         "tags": {
-            "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('AppServicePlanName'))]": "empty",
-            "displayName": "Website"
-         },
-         "properties": {
-            "name": "[parameters('AppServiceName')]",
-            "serverFarmId": "[concat('/subscriptions/', parameters('SubscriptionId'),'/resourceGroups/', parameters('AppServicePlanRGName'), '/providers/Microsoft.Web/serverfarms/', parameters('AppServicePlanName'))]"
-         },
-         "resources": [
-            {
-               "apiVersion": "2015-08-01",
-               "type": "config",
-               "name": "connectionstrings",
-               "dependsOn": [
-                  "[resourceId('Microsoft.Web/Sites/', parameters('AppServiceName'))]"
-               ],
-               "properties": {
-                  "DefaultConnection": {
-                     "value": "[concat('Data Source=tcp:', reference(resourceId('Microsoft.Sql/servers/', parameters('SqlServerName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('SqlDbName'), ';User Id=', parameters('SqlServerAdminLogin'), '@', parameters('SqlServerName'), ';Password=', parameters('SqlServerAdminPassword'), ';')]",
-                     "type": "SQLServer"
+            "template": {
+               "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+               "contentVersion": "1.0.0.0",
+               "parameters": {
+                  "SubscriptionId": {
+                     "type": "securestring"
+                  },
+                  "Location": {
+                     "type": "securestring"
+                  },
+            
+                  "IdentityAppServiceName": {
+                     "type": "securestring"
+                  },
+                  "AppServicePlanName": {
+                     "type": "securestring"
+                  },
+                  "AppServicePlanRGName": {
+                     "type": "securestring"
+                  },
+            
+                  "SqlServerName": {
+                     "type": "securestring"
+                  },
+                  "SqlServerAdminLogin": {
+                     "type": "securestring"
+                  },
+                  "SqlServerAdminPassword": {
+                     "type": "securestring"
+                  },
+                  "SqlDbName": {
+                     "type": "securestring"
+                  },
+                  "SqlDbTierEdition": {
+                     "type": "securestring"
+                  },
+                  "SqlDbTierName": {
+                     "type": "securestring"
+                  },
+                  "collation": {
+                     "type": "string",
+                     "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+                  }
+               },
+               "resources": [
+                  {
+                     "name": "[parameters('SqlServerName')]",
+                     "type": "Microsoft.Sql/servers",
+                     "location": "[parameters('Location')]",
+                     "tags": {
+                        "displayName": "SqlServer"
+                     },
+                     "apiVersion": "2014-04-01",
+                     "properties": {
+                        "administratorLogin": "[parameters('SqlServerAdminLogin')]",
+                        "administratorLoginPassword": "[parameters('SqlServerAdminPassword')]"
+                     },
+                     "resources": [
+                        {
+                           "name": "[parameters('SqlDbName')]",
+                           "type": "databases",
+                           "location": "[parameters('Location')]",
+                           "tags": {
+                              "displayName": "Database"
+                           },
+                           "apiVersion": "2014-04-01",
+                           "dependsOn": [
+                              "[resourceId('Microsoft.Sql/servers/', parameters('SqlServerName'))]"
+                           ],
+                           "properties": {
+                              "edition": "[parameters('SqlDbTierEdition')]",
+                              "collation": "[parameters('collation')]",
+                              "requestedServiceObjectiveName": "[parameters('SqlDbTierName')]"
+                           }
+                        },
+                        {
+                           "type": "firewallRules",
+                           "apiVersion": "2014-04-01",
+                           "dependsOn": [
+                              "[resourceId('Microsoft.Sql/servers/', parameters('SqlServerName'))]"
+                           ],
+                           "location": "[parameters('Location')]",
+                           "name": "AllowAllWindowsAzureIps",
+                           "properties": {
+                              "endIpAddress": "0.0.0.0",
+                              "startIpAddress": "0.0.0.0"
+                           }
+                        }
+                     ]
+                  },
+                  {
+                     "apiVersion": "2015-08-01",
+                     "name": "[parameters('IdentityAppServiceName')]",
+                     "type": "Microsoft.Web/sites",
+                     "location": "[parameters('Location')]",
+                     "tags": {
+                        "[concat('hidden-related:', parameters('Location'), '/providers/Microsoft.Web/serverfarms/', parameters('AppServicePlanName'))]": "empty",
+                        "displayName": "Website"
+                     },
+                     "properties": {
+                        "name": "[parameters('IdentityAppServiceName')]",
+                        "serverFarmId": "[concat('/subscriptions/', parameters('SubscriptionId'),'/resourceGroups/', parameters('AppServicePlanRGName'), '/providers/Microsoft.Web/serverfarms/', parameters('AppServicePlanName'))]"
+                     },
+                     "resources": [
+                        {
+                           "apiVersion": "2015-08-01",
+                           "type": "config",
+                           "name": "connectionstrings",
+                           "dependsOn": [
+                              "[resourceId('Microsoft.Web/Sites/', parameters('IdentityAppServiceName'))]"
+                           ],
+                           "properties": {
+                              "DefaultConnection": {
+                                 "value": "[concat('Data Source=tcp:', reference(resourceId('Microsoft.Sql/servers/', parameters('SqlServerName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('SqlDbName'), ';User Id=', parameters('SqlServerAdminLogin'), '@', parameters('SqlServerName'), ';Password=', parameters('SqlServerAdminPassword'), ';')]",
+                                 "type": "SQLServer"
+                              }
+                           }
+                        }
+                     ]
+                  }
+               ]
+            },
+            "parameters": {
+               "SubscriptionId": {
+                  "value": "[parameters('SubscriptionId')]"
+               },
+               "Location": {
+                  "value": "[parameters('Location')]"
+               },
+
+               "IdentityAppServiceName": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "IdentityAppServiceName"
+                  }
+               },
+               "AppServicePlanName": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "AppServicePlanName"
+                  }
+               },
+               "AppServicePlanRGName": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "AppServicePlanRGName"
+                  }
+               },
+
+               "SqlServerName": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "SqlServerName"
+                  }
+               },
+               "SqlServerAdminLogin": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "SqlServerAdminLogin"
+                  }
+               },
+               "SqlServerAdminPassword": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "SqlServerAdminPassword"
+                  }
+               },
+               "SqlDbName": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "SqlDbName"
+                  }
+               },
+               "SqlDbTierEdition": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "SqlDbTierEdition"
+                  }
+               },
+               "SqlDbTierName": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "SqlDbTierName"
                   }
                }
             }
-         ]
+         }
       }
-   ]
+   ],
+   "outputs": {}
 }

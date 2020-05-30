@@ -8,35 +8,14 @@ Function New-MultilinksResourceGroupDeployment {
 
    [CmdletBinding()]
    param (
-      [Parameter(Mandatory)] [string] $AppServicePlanName,
-      [Parameter(Mandatory)] [string] $AppServicePlanRGName,
-      [Parameter(Mandatory)] [string] $AppServicePlanRGLocation,
-      [Parameter(Mandatory)] [string] $AppServicePlanTier,
+      [Parameter(Mandatory)] [string] $KeyVaultName,
+      [Parameter(Mandatory)] [string] $KeyVaultRGName,
 
-      [Parameter(Mandatory)] [string] $SqlServerName,
-      [Parameter(Mandatory)] [string] $SqlServerAdminLogin,
-      [Parameter(Mandatory)] [SecureString] $SqlServerAdminPassword,
-      [Parameter(Mandatory)] [string] $SqlDbName,
-      [Parameter(Mandatory)] [string] $SqlDbTierEdition,
-      [Parameter(Mandatory)] [string] $SqlDbTierName,
-
-      [Parameter(Mandatory)] [string] $SubscriptionId,
-      [Parameter(Mandatory)] [string] $AppServiceName,
       [Parameter(Mandatory)] [string] $ResourceGroupName,
       [Parameter(Mandatory)] [string] $ResourceGroupLocation,
-
       [Parameter(Mandatory)] [string] $TemplateFile,
       [Parameter(Mandatory)] [string] $TemplateParametersFile
    )
-
-   $AppServicePlanParameters = @{
-      'Name'              = $AppServicePlanName
-      'ResourceGroupName' = $AppServicePlanRGName
-      'Location'          = $AppServicePlanRGLocation
-      'Tier'              = $AppServicePlanTier
-   }
-
-   New-AzureAppServicePlan @AppServicePlanParameters
 
    try {
       [Microsoft.Azure.Common.Authentication.AzureSession]::ClientFactory.AddUserAgent("VSAzureTools-$UI$($host.name)".replace(' ', '_'), '3.0.0')
@@ -55,17 +34,8 @@ Function New-MultilinksResourceGroupDeployment {
    }
 
    $MultilinksResourceGroupParameters = @{
-      'SubscriptionId'           = $SubscriptionId
-      'AppServiceName'           = $AppServiceName
-      'AppServicePlanName'       = $AppServicePlanName
-      'AppServicePlanRGName'     = $AppServicePlanRGName
-
-      'SqlServerName'            = $SqlServerName
-      'SqlServerAdminLogin'      = $SqlServerAdminLogin
-      'SqlServerAdminPassword'   = $SqlServerAdminPassword
-      'SqlDbName'                = $SqlDbName
-      'SqlDbTierEdition'         = $SqlDbTierEdition
-      'SqlDbTierName'            = $SqlDbTierName
+      'KeyVaultName'             = $KeyVaultName
+      'KeyVaultRGName'           = $KeyVaultRGName
    }
 
    New-AzResourceGroupDeployment -Name ((Get-ChildItem $TemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
