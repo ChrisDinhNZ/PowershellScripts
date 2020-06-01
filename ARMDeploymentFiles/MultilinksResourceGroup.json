@@ -40,7 +40,6 @@
                   "Location": {
                      "type": "securestring"
                   },
-            
                   "IdentityAppServiceName": {
                      "type": "securestring"
                   },
@@ -50,7 +49,6 @@
                   "AppServicePlanRGName": {
                      "type": "securestring"
                   },
-            
                   "SqlServerName": {
                      "type": "securestring"
                   },
@@ -72,6 +70,66 @@
                   "collation": {
                      "type": "string",
                      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+                  },
+                  "Environment": {
+                     "type": "securestring"
+                  },
+                  "EmailServiceName": {
+                     "type": "securestring"
+                  },
+                  "EmailServiceEmail": {
+                     "type": "securestring"
+                  },
+                  "EmailServiceApiKey": {
+                     "type": "securestring"
+                  },
+                  "CorsIdentity": {
+                     "type": "securestring"
+                  },
+                  "CorsCore": {
+                     "type": "securestring"
+                  },
+                  "CorsPortal": {
+                     "type": "securestring"
+                  },
+                  "CoreConfigName": {
+                     "type": "securestring"
+                  },
+                  "CoreConfigDisplayName": {
+                     "type": "securestring"
+                  },
+                  "PortalConfigAllowedCorsOriginsIdp": {
+                     "type": "securestring"
+                  },
+                  "PortalConfigAllowedCorsOriginsApi": {
+                     "type": "securestring"
+                  },
+                  "PortalConfigLoginRedirectUri": {
+                     "type": "securestring"
+                  },
+                  "PortalConfigSilentLoginRedirectUri": {
+                     "type": "securestring"
+                  },
+                  "PortalConfigLogoutRedirectUri": {
+                     "type": "securestring"
+                  },
+                  "PortalConfigRegistrationConfirmedRedirectUri": {
+                     "type": "securestring"
+                  },
+                  "PortalConfigResetPasswordSuccessfulRedirectUri": {
+                     "type": "securestring"
+                  },
+                  "SystemOwnerConfigEmail": {
+                     "type": "securestring"
+                  },
+                  "SystemOwnerConfigFirstName": {
+                     "type": "securestring"
+                  },
+                  "SystemOwnerConfigLastName": {
+                     "type": "securestring"
+                  },
+                  "SystemOwnerConfigDefaultPassword": {
+                     "type": "securestring"
                   }
                },
                "resources": [
@@ -137,15 +195,48 @@
                         {
                            "apiVersion": "2015-08-01",
                            "type": "config",
-                           "name": "connectionstrings",
+                           "name": "connectionStrings",
                            "dependsOn": [
                               "[resourceId('Microsoft.Web/Sites/', parameters('IdentityAppServiceName'))]"
                            ],
                            "properties": {
-                              "DefaultConnection": {
+                              "ConnectionStrings__IdentityDb": {
                                  "value": "[concat('Data Source=tcp:', reference(resourceId('Microsoft.Sql/servers/', parameters('SqlServerName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('SqlDbName'), ';User Id=', parameters('SqlServerAdminLogin'), '@', parameters('SqlServerName'), ';Password=', parameters('SqlServerAdminPassword'), ';')]",
                                  "type": "SQLServer"
                               }
+                           }
+                        },
+                        {
+                           "name": "appsettings",
+                           "type": "config",
+                           "apiVersion": "2015-08-01",
+                           "dependsOn": [
+                              "[resourceId('Microsoft.Web/sites', parameters('IdentityAppServiceName'))]"
+                           ],
+                           "tags": {
+                              "displayName": "IdentityAppSettings"
+                           },
+                           "properties": {
+                              "Environment": "[parameters('Environment')]",
+                              "EmailService__Name": "[parameters('EmailServiceName')]",
+                              "EmailService__Email": "[parameters('EmailServiceEmail')]",
+                              "EmailService__ApiKey": "[parameters('EmailServiceApiKey')]",
+                              "Cors__Identity": "[parameters('CorsIdentity')]",
+                              "Cors__Core": "[parameters('CorsCore')]",
+                              "Cors__Portal": "[parameters('CorsPortal')]",
+                              "CoreConfig__Name": "[parameters('CoreConfigName')]",
+                              "CoreConfig__DisplayName": "[parameters('CoreConfigDisplayName')]",
+                              "PortalConfig__AllowedCorsOriginsIdp": "[parameters('PortalConfigAllowedCorsOriginsIdp')]",
+                              "PortalConfig__AllowedCorsOriginsApi": "[parameters('PortalConfigAllowedCorsOriginsApi')]",
+                              "PortalConfig__LoginRedirectUri": "[parameters('PortalConfigLoginRedirectUri')]",
+                              "PortalConfig__SilentLoginRedirectUri": "[parameters('PortalConfigSilentLoginRedirectUri')]",
+                              "PortalConfig__LogoutRedirectUri": "[parameters('PortalConfigLogoutRedirectUri')]",
+                              "PortalConfig__RegistrationConfirmedRedirectUri": "[parameters('PortalConfigRegistrationConfirmedRedirectUri')]",
+                              "PortalConfig__ResetPasswordSuccessfulRedirectUri": "[parameters('PortalConfigResetPasswordSuccessfulRedirectUri')]",
+                              "SystemOwnerConfig__Email": "[parameters('SystemOwnerConfigEmail')]",
+                              "SystemOwnerConfig__FirstName": "[parameters('SystemOwnerConfigFirstName')]",
+                              "SystemOwnerConfig__LastName": "[parameters('SystemOwnerConfigLastName')]",
+                              "SystemOwnerConfig__DefaultPassword": "[parameters('SystemOwnerConfigDefaultPassword')]"
                            }
                         }
                      ]
@@ -159,7 +250,6 @@
                "Location": {
                   "value": "[parameters('Location')]"
                },
-
                "IdentityAppServiceName": {
                   "reference": {
                      "keyVault": {
@@ -184,7 +274,6 @@
                      "secretName": "AppServicePlanRGName"
                   }
                },
-
                "SqlServerName": {
                   "reference": {
                      "keyVault": {
@@ -231,6 +320,166 @@
                         "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
                      },
                      "secretName": "SqlDbTierName"
+                  }
+               },
+               "Environment": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "Environment"
+                  }
+               },
+               "EmailServiceName": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "EmailServiceName"
+                  }
+               },
+               "EmailServiceEmail": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "EmailServiceEmail"
+                  }
+               },
+               "EmailServiceApiKey": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "EmailServiceApiKey"
+                  }
+               },
+               "CorsIdentity": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "CorsIdentity"
+                  }
+               },
+               "CorsCore": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "CorsCore"
+                  }
+               },
+               "CorsPortal": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "CorsPortal"
+                  }
+               },
+               "CoreConfigName": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "CoreConfigName"
+                  }
+               },
+               "CoreConfigDisplayName": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "CoreConfigDisplayName"
+                  }
+               },
+               "PortalConfigAllowedCorsOriginsIdp": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "PortalConfigAllowedCorsOriginsIdp"
+                  }
+               },
+               "PortalConfigAllowedCorsOriginsApi": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "PortalConfigAllowedCorsOriginsApi"
+                  }
+               },
+               "PortalConfigLoginRedirectUri": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "PortalConfigLoginRedirectUri"
+                  }
+               },
+               "PortalConfigSilentLoginRedirectUri": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "PortalConfigSilentLoginRedirectUri"
+                  }
+               },
+               "PortalConfigLogoutRedirectUri": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "PortalConfigLogoutRedirectUri"
+                  }
+               },
+               "PortalConfigRegistrationConfirmedRedirectUri": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "PortalConfigRegistrationConfirmedRedirectUri"
+                  }
+               },
+               "PortalConfigResetPasswordSuccessfulRedirectUri": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "PortalConfigResetPasswordSuccessfulRedirectUri"
+                  }
+               },
+               "SystemOwnerConfigEmail": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "SystemOwnerConfigEmail"
+                  }
+               },
+               "SystemOwnerConfigFirstName": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "SystemOwnerConfigFirstName"
+                  }
+               },
+               "SystemOwnerConfigLastName": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "SystemOwnerConfigLastName"
+                  }
+               },
+               "SystemOwnerConfigDefaultPassword": {
+                  "reference": {
+                     "keyVault": {
+                        "id": "[resourceId(parameters('SubscriptionId'), parameters('KeyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+                     },
+                     "secretName": "SystemOwnerConfigDefaultPassword"
                   }
                }
             }
