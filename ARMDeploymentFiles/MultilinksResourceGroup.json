@@ -200,7 +200,7 @@
                               "[resourceId('Microsoft.Web/Sites/', parameters('IdentityAppServiceName'))]"
                            ],
                            "properties": {
-                              "ConnectionStrings__IdentityDb": {
+                              "IdentityDb": {
                                  "value": "[concat('Data Source=tcp:', reference(resourceId('Microsoft.Sql/servers/', parameters('SqlServerName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('SqlDbName'), ';User Id=', parameters('SqlServerAdminLogin'), '@', parameters('SqlServerName'), ';Password=', parameters('SqlServerAdminPassword'), ';')]",
                                  "type": "SQLServer"
                               }
